@@ -1,0 +1,85 @@
+version: '3'
+
+services:
+
+    #PHP Service
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: laravel8-image
+        container_name: app
+        restart: unless-stopped
+        tty: true
+        environment:
+            SERVICE_NAME: app
+            SERVICE_TAGS: dev
+            working_dir: /var/www
+        volumes:
+            - "./:/var/www"
+            - "./php/local.ini:/usr/local/etc/php/conf.d/local.ini"
+        networks:
+            - laravel8-network
+
+    #Nginx Service
+    webserver:
+        image: nginx:alpine
+        container_name: laravel8-webserver
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "88:80"
+            - "443:443"
+        volumes:
+            - ./:/var/www
+            - ./nginx/conf.d/:/etc/nginx/conf.d/
+        networks:
+            - laravel8-network
+
+    #MySQL Service
+    db:
+        image: mysql
+        command: --default-authentication-plugin=mysql_native_password
+        container_name: laravel8-db
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "33061:3306"
+        environment:
+            MYSQL_DATABASE: laravel
+            MYSQL_USER: admin
+            MYSQL_PASSWORD: rahasia
+            MYSQL_ROOT_PASSWORD: rahasia
+            SERVICE_TAGS: dev
+            SERVICE_NAME: mysql
+        networks:
+            - laravel8-network
+        volumes:
+            - laravel-db:/var/lib/mysql/
+#           - ./mysql/my.cnf:/etc/mysql/my.cnf
+
+    #PHPMyAdmin Service
+    phpmyadmin:
+        container_name: laravel8-phpmyadmin
+        image: phpmyadmin/phpmyadmin
+        ports:
+            - "7000:80"
+        links:
+            - db:db
+        environment:
+            MYSQL_USER: admin
+            MYSQL_PASSWORD: rahasia
+            MYSQL_ROOT_PASSWORD: rahasia
+            UPLOAD_LIMIT: 3000000000
+        networks:
+            - laravel8-network
+
+#Docker Networks
+networks:
+    laravel8-network:
+        driver: bridge
+
+#Volumes
+volumes:
+    laravel-db:
+        driver: local
