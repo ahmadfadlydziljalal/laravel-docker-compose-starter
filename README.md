@@ -1,3 +1,38 @@
+
+# Laravel With Docker Compose
+
+Selain bisa menggunakan Laradock, menggunakan docker-compose juga bisa kita gunakan sebagai membuat suatu environment untuk Laravel.
+Repository ini menggunakan :
+
+* MySQL
+* NginX
+* PHPMyAdmin
+
+### Memulai project
+```
+docker-compose up -d
+```
+
+You can check service with execute: 
+
+```
+docker-compose ps
+```
+Hasil akan tampak kurang lebih seperti ini:
+```
+IMAGE                    COMMAND                         PORTS                                            NAMES
+phpmyadmin/phpmyadmin    "/docker-entrypoint.…"          0.0.0.0:7000->80/tcp                             laravel8-phpmyadmin
+mysql                    "docker-entrypoint.s…"          33060/tcp, 0.0.0.0:33061->3306/tcp               laravel8-db
+laravel8-image           "docker-php-entrypoi…"          9000/tcp                                         app
+nginx:alpine             "nginx -g 'daemon of…"          0.0.0.0:443->443/tcp, 0.0.0.0:88->80/tcp         laravel8-webserver
+
+```
+
+Cara akses app:
+* Web : Buka browser menggunakan, masukkan alamat localhost:88
+* PHPMyAdmin : Buka browser menggunakan, masukkan alamat localhost:7000
+
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
 <p align="center">
